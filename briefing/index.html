@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Papel de decisão — Conta de Pagamentos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <nav class="rail" aria-label="Seções">
+    <strong>Comitê de arquitetura</strong>
+    <a href="#decisao">01 Decisão</a>
+    <a href="#problema">02 Problema</a>
+    <a href="#produto">03 Produto</a>
+    <a href="#core">04 Core</a>
+    <a href="#cadeia">05 Cadeia</a>
+    <a href="#capacidades">06 Capacidades</a>
+    <a href="#ondas">07 Ondas</a>
+    <a href="#estilo">08 Estilo</a>
+    <a href="#pedir">09 Pedido</a>
+  </nav>
+
+  <article class="folha">
+    <header class="topo">
+      <p class="kicker">Enterprise Architecture · Banco de crédito · São Paulo</p>
+      <h1>Papel de decisão: conta agora, core composável, cashback depois</h1>
+      <p class="meta">Visão de arquitetura · Fase A do ADM · uso interno do comitê</p>
+    </header>
+
+    <div class="acoes">
+      <button type="button" id="imprimir">Imprimir / PDF</button>
+      <a href="../docs/00-sumario-executivo.md">Sumário em Markdown</a>
+      <a href="../README.md">Índice do pacote</a>
+    </div>
+
+    <section id="decisao">
+      <h2>01. Três decisões, uma frase</h2>
+      <div class="decisao">
+        <strong>Recomendação</strong>
+        <p>Habilitar Conta de Pagamentos sobre cliente, ledger e PIX compartilhados. Não comprar core monolítico. Manter microserviços. Cashback entra como capacidade de retenção na arquitetura alvo, não como produto isolado neste ciclo.</p>
+      </div>
+      <p>O teste de público validou os dois produtos. A função desta mesa não é repetir o teste. É escolher o produto que ataca o silo e cria o trilho do próximo lançamento — a expectativa que o C-level colocou junto com o engajamento.</p>
+    </section>
+
+    <section id="problema">
+      <h2>02. O problema não é falta de app</h2>
+      <p>O portfólio (CDC, cartão, pessoal, consignado, garantia) cresceu como negócios paralelos. Cada um trouxe o próprio cliente, o próprio desembolso e a própria cobrança. Reaproveitamento baixo não é falha de time: é fronteira de subdomínio errada.</p>
+      <table>
+        <thead>
+          <tr><th>Subdomínio</th><th>Tipo</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Originação de crédito</td><td>Núcleo</td><td>Forte, silado — potencializar</td></tr>
+          <tr><td>Conta e saldo</td><td>Núcleo</td><td class="bad">Ausente</td></tr>
+          <tr><td>Ordem de pagamento</td><td>Núcleo</td><td class="bad">Só tesouraria de empréstimo</td></tr>
+          <tr><td>Cliente / KYC</td><td>Suporte</td><td class="bad">Cinco cadastros</td></tr>
+          <tr><td>Parcerias e benefícios</td><td>Suporte</td><td>Ausente — e deve continuar assim até T4</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="produto">
+      <h2>03. Por que conta e não cashback</h2>
+      <table>
+        <thead>
+          <tr><th></th><th>Conta de Pagamentos</th><th>Cashback com parcerias</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Engajamento</td><td>Relação diária (saldo, PIX)</td><td>Relação de campanha (pontos)</td></tr>
+          <tr><td>Silos</td><td>Obriga cliente + ledger + pagamento</td><td>Dá para colar num produto e piorar</td></tr>
+          <tr><td>Próximo lançamento</td><td>Vira trilho</td><td>Não desbloqueia nada</td></tr>
+          <tr><td>Cadeia de valor</td><td>Cria o elo <em>servir</em></td><td>Enfeita o elo <em>reter</em></td></tr>
+          <tr><td>Regulação</td><td>Disciplina (conta, PIX, PLD)</td><td>Barreira baixa, ativo fraco</td></tr>
+        </tbody>
+      </table>
+      <blockquote>Cashback sem lançamento é mídia. No Brasil, PIX na conta é relação. Lastreado no ADR-001.</blockquote>
+    </section>
+
+    <section id="core">
+      <h2>04. Resposta ao CTO: não é o core fechado</h2>
+      <p>Comprar suíte de core (conta + crédito + cobrança num vendor) reconcentra o que já está fragmentado, fere o estilo de microserviços e pede um programa de anos em cima de C4/C5, que já estão aderentes.</p>
+      <table>
+        <thead>
+          <tr><th>Bloco</th><th>Comprar?</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Motor de ledger / partidas</td><td class="ok">Sim, se o RFI ganhar</td></tr>
+          <tr><td>Conexão SPI / PIX</td><td class="ok">Sim, atrás de adaptador</td></tr>
+          <tr><td>Identidade (IdP)</td><td class="ok">Sim</td></tr>
+          <tr><td>Cliente, ordem, catálogo, ciclo de vida da conta</td><td>Construir — é o ativo</td></tr>
+          <tr><td>Core + originação + cobrança</td><td class="bad">Não. Desclassifica no RFI</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="cadeia">
+      <h2>05. Cadeia de valor</h2>
+      <p class="nota">AS-IS — o buraco está no meio, não na originação.</p>
+      <div class="cadeia" aria-label="Cadeia atual">
+        <div class="elo">Atrair</div>
+        <div class="elo">Conhecer<br>por produto</div>
+        <div class="elo">Originar<br>crédito</div>
+        <div class="elo">Desembolsar</div>
+        <div class="elo falha">Servir /<br>transacionar<br>ausente</div>
+        <div class="elo">Cobrar</div>
+      </div>
+      <p class="nota">TO-BE — conta ocupa o elo que faltava; crédito passa a desembolsar no trilho.</p>
+      <div class="cadeia" aria-label="Cadeia alvo">
+        <div class="elo">Atrair</div>
+        <div class="elo novo">Conhecer<br>uma vez</div>
+        <div class="elo novo">Servir<br>conta e PIX</div>
+        <div class="elo">Originar<br>crédito</div>
+        <div class="elo novo">Desembolsar<br>no trilho</div>
+        <div class="elo">Cobrar /<br>reter</div>
+      </div>
+    </section>
+
+    <section id="capacidades">
+      <h2>06. Capacidades que este ciclo mexe</h2>
+      <table>
+        <thead>
+          <tr><th>Capacidade</th><th>Papel</th><th>AS-IS</th><th>Depois de T2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>C1 Cliente</td><td>Essencial</td><td>Fragmentada</td><td>Adequada</td></tr>
+          <tr><td>C2 Conta e ledger</td><td>Estratégica</td><td>Ausente</td><td>Adequada</td></tr>
+          <tr><td>C3 Pagamentos</td><td>Estratégica</td><td>Só desembolso</td><td>PIX in/out</td></tr>
+          <tr><td>C4 Originação</td><td>Essencial</td><td>Forte</td><td>Forte — não reescrever</td></tr>
+          <tr><td>C6 Catálogo</td><td>Estratégica</td><td>Ausente</td><td>Nasce com a conta</td></tr>
+          <tr><td>C9 Parcerias</td><td>Suporte</td><td>Ausente</td><td>Continua ausente (desenhada)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="ondas">
+      <h2>07. Do silo ao alvo, sem freeze</h2>
+      <table>
+        <thead>
+          <tr><th>Onda</th><th>O que entra no ar</th><th>O crédito faz o quê</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>T1</td><td>Pessoa, KYC, identidade, eventos, catálogo</td><td>Lê pessoa via ACL, num piloto</td></tr>
+          <tr><td>T2</td><td>Conta, ledger, PIX, extrato</td><td>Continua no silo; leitura ampla</td></tr>
+          <tr><td>T3</td><td>Desembolso como ordem; TED/boleto se preciso</td><td>Um produto passa a usar o trilho</td></tr>
+          <tr><td>T4</td><td>Benefício / cashback lastreado em lançamento</td><td>Mais produtos convergem</td></tr>
+        </tbody>
+      </table>
+      <p>Critério duro: T2 não abre canal se pessoa ainda puder nascer fora do contexto Cliente. T4 não abre se o cashback tiver moeda paralela.</p>
+    </section>
+
+    <section id="estilo">
+      <h2>08. O estilo não muda — o recorte muda</h2>
+      <p>Microserviços permanecem. O que cai é o recorte por produto. Bounded context vira a unidade. Evento liga os fluxos. Ledger, conta e ordem de pagamento formam um núcleo síncrono porque saldo não é eventual. Fornecedor entra por adaptador, não por barramento.</p>
+    </section>
+
+    <section id="pedir">
+      <h2>09. O que este comitê precisa aprovar</h2>
+      <ol>
+        <li>Patrocínio de T1 e T2.</li>
+        <li>Moratória de silo: produto novo não abre cadastro próprio.</li>
+        <li>RFI de ledger e SPI — com desclassificação de suíte de crédito.</li>
+        <li>Cashback fora do ciclo, registrado no alvo.</li>
+      </ol>
+      <p class="nota">Lastro completo no repositório: sumário, ADRs 001–003, mapas de problema e capacidade, cadeia e fluxos, AS-IS, TO-BE, building blocks, roadmap e processos.</p>
+    </section>
+  </article>
+  <script src="briefing.js"></script>
+</body>
+</html>
